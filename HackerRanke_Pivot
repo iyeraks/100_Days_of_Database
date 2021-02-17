@@ -1,0 +1,23 @@
+Sample Input
+
+Image for post
+
+Sample Output
+
+Jenny    Ashley     Meera  Jane
+Samantha Christeen  Priya  Julia
+NULL     Ketty      NULL   Maria
+
+SQL Query
+
+select Name, [Doctor],[Professor],[Singer],[Actor]
+from
+(select 
+  row_number() over(partition by Occupation Order by Name) rn
+  from Occupations) as oc
+  Pivot
+  (
+  max(Name)
+  for Occupation in ([Doctor],[Professor],[Singer],[Actor])
+  ) as pvt
+  
