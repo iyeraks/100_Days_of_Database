@@ -1,0 +1,71 @@
+create table person
+(
+  person_id int not null,
+  first_name nvarchar(10) not null,
+  last_name nvarchar(10) not null
+);    
+insert into person (person_id, first_name,last_name) values
+(1, 'Alice','Doe'),
+(2, 'Bob','blabla'),
+(3, 'Charlie','Green'),
+(4, 'David','Beckham'),
+(5, 'Eric','Hughe');
+
+create table meeting
+(
+  meeting_id int not null,
+  title nvarchar(30)
+);    
+insert into meeting (meeting_id, title) values
+(100, 'Corporate training'),
+(200, 'Weekly sales'),
+(300, 'Welcome introduction'),
+(400, 'Evaluation');
+
+create table participant
+(
+  meeting_id smallint not null,
+  person_id smallint not null
+);    
+insert into participant (meeting_id, person_id) values
+(100,1), (100,2), (100,3), (100,4), (100,5),
+(200,1), (200,2),
+         (300,2), (300,3), (300,4),
+                  (400,3),          (400,5),
+                  (500,3),          (500,5);
+                  
+                  
+                  
+                  
+The desired output:
+first_person | second_person | title
+------------+--------------+--------------------
+John Doe    | Jane Doe     | The Best Movie Ever
+...
+
+
+
+
+Output:
+
+with most_meeting as(
+  select p1.person_id as id1, p2.person_id as id2
+  from participant p1
+  join participant p2 on p1.meeting_id=p2.meeting_id
+  where p1.person_id <> p2.person_id
+  group by 1,2
+  order by count(p1.meeting_id) desc
+  limit 1)
+  
+  select
+    (select first_name || ' ' || last_name from person where person_id = mm.id1) as first_person,
+    (select first_name || ' ' || last_name from person where person_id = mm.id2) as second_person,
+    m.title as title
+    from most_meeting as mm
+    inner join participant pa1 on mm.id1 = pa1.person_id
+    inner join participant pa2 on mm.id2 = pa2.person_id
+    inner join meeting m on pa1.meeting_id = m.meeting_id 
+    and pa2.meeting_id = m.meeting_id
+    
+    
+    
