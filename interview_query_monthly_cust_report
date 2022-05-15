@@ -1,0 +1,47 @@
+Write a query to show the number of users, number of transactions placed, and total order amount per month in the year 2020. Assume that we are only interested in the monthly reports for a single year (January-December).
+
+Example:
+
+Input:
+
+transactions table
+
+Column	Type
+id	INTEGER
+user_id	INTEGER
+created_at	DATETIME
+product_id	INTEGER
+quantity	INTEGER
+products table
+
+Column	Type
+id	INTEGER
+name	VARCHAR
+price	FLOAT
+users table
+
+Column	Type
+id	INTEGER
+name	VARCHAR
+sex	VARCHAR
+Output:
+
+Column	Type
+month	INTEGER
+num_customers	INTEGER
+num_orders	INTEGER
+order_amt	INTEGER
+
+
+---Solution---
+
+select month(t.created_at) as month,
+count(distinct t.user_id) as num_customers,
+count(t.id) as num_orders,
+sum(t.quantity * p.price) as order_amt
+from
+transactions t inner join
+products p on 
+t.product_id = p.id
+where year(t.created_at) = 2020
+group by month
