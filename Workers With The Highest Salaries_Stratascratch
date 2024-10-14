@@ -1,3 +1,9 @@
+#You have been asked to find the job titles of the highest-paid employees.
+#Your output should include the highest-paid title or multiple titles with the same salary.
+
+#Tables: worker, title
+
+
 WITH max_salary AS (
     SELECT MAX(salary) AS max_sal
     FROM worker
