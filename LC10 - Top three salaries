@@ -49,3 +49,31 @@ Employee e2 on e.DepartmentId = e2.DepartmentId and e.Salary <= e2.Salary
 group by e.Id
 having count(distinct e2.Salary) <= 3
 order by e.DepartmentId, e.Salary desc
+
+-------- Another method using CTE -------------------------
+
+WITH RankedSalaries AS (
+    SELECT 
+        e.Id,
+        e.Name AS Employee,
+        e.Salary,
+        e.DepartmentId,
+        d.Name AS Department,
+        DENSE_RANK() OVER (PARTITION BY e.DepartmentId ORDER BY e.Salary DESC) AS SalaryRank
+    FROM 
+        Employee e
+    JOIN 
+        Department d ON e.DepartmentId = d.Id
+)
+SELECT 
+    Department,
+    Employee,
+    Salary
+FROM 
+    RankedSalaries
+WHERE 
+    SalaryRank <= 3
+ORDER BY 
+    Department, Salary DESC;
+
+
