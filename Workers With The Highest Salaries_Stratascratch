@@ -1,0 +1,17 @@
+WITH max_salary AS (
+    SELECT MAX(salary) AS max_sal
+    FROM worker
+),
+highest_paid_workers AS (
+    SELECT w.worker_id, w.salary
+    FROM worker w
+    JOIN max_salary ms ON w.salary = ms.max_sal
+),
+highest_paid_titles AS (
+    SELECT DISTINCT t.worker_title
+    FROM title t
+    JOIN highest_paid_workers hpw ON t.worker_ref_id = hpw.worker_id
+)
+SELECT worker_title AS best_paid_title
+FROM highest_paid_titles
+ORDER BY worker_title;
