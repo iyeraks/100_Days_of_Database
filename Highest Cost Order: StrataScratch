@@ -1,0 +1,24 @@
+WITH daily AS (
+  SELECT
+      o.order_date,
+      o.cust_id,
+      SUM(o.total_order_cost) AS daily_total
+  FROM orders AS o
+  WHERE o.order_date BETWEEN '2019-02-01' AND '2019-05-01'
+  GROUP BY o.order_date, o.cust_id
+),
+ranked AS (
+  SELECT
+      d.*,
+      MAX(d.daily_total) OVER (PARTITION BY d.order_date) AS max_total_for_date
+  FROM daily d
+)
+SELECT
+    c.first_name,
+    r.daily_total AS total_cost,
+    r.order_date   AS `date`
+FROM ranked r
+JOIN customers c
+  ON c.id = r.cust_id
+WHERE r.daily_total = r.max_total_for_date
+ORDER BY r.order_date, c.first_name;
